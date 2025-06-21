@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Management App</title>
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: linear-gradient(45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        @keyframes gradientAnimation {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+
+        .container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .container::-webkit-scrollbar {
+            display: none;
+        }
+
+        form, #tasks, #timer {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .quadrant {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            width: 100%;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            hyphens: auto;
+        }
+
+        #urgent-important {
+            background: rgba(255, 0, 0, 0.7);
+        }
+
+        #important-noturgent {
+            background: rgba(0, 0, 255, 0.7);
+        }
+
+        #urgent-notimportant {
+            background: rgba(0, 255, 0, 0.7);
+        }
+
+        #noturgent-notimportant {
+            background: rgba(255, 255, 0, 0.7);
+        }
+
+        .task {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .task label {
+            margin-right: 10px;
+            word-break: break-word;
+            flex-grow: 1;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            flex-grow: 1;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .delete-button {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        h2 {
+            color: navy;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 50px;
+            height: 50px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-increase {
+            background-color: #000080;
+        }
+        .btn-decrease {
+            background-color: #f44336;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        #addTask {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #addTask:hover {
+            background-color: #45a049;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="btn btn-increase" onclick="resizePage(1.1)">+</button>
+        <button class="btn btn-decrease" onclick="resizePage(0.9)">-</button>
+
+        <h2>Ensure the task entered is in the right priority setting:</h2>
+
+        <p><a href="t72.html">Go to weekly/monthly view </a></p>    
+    <p><a href="clock.html">Go to time tracker </a></p>
+
+        <audio id="backgroundAudio" src="whitenoise.mp3" loop></audio>
+        <form>
+            <label for="username">Enter your email id:</label><br>
+            <input type="text" id="username"><br><br>
+            <button type="button" id="login">Login</button>
+        </form>
+        <br>
+        <form id="taskForm" style="display:none;">
+            <label for="todo">To-Do List:</label><br>
+            <input type="text" id="todo"><br><br>
+            <label for="priority">Priority (Urgent/Important):</label><br>
+            <select id="priority">
+                <option value="urgent-important">Urgent/Important</option>
+                <option value="important-noturgent">Important/Not Urgent</option>
+                <option value="urgent-notimportant">Urgent/Not Important</option>
+                <option value="noturgent-notimportant">Not Urgent/Not Important</option>
+            </select><br><br>
+            <label for="time">Estimated Time(minutes):</label><br>
+            <input type="number" id="time"> <br><br>
+            <label for="workTime">Work Time (minutes):</label><br>
+            <input type="number" id="workTime" value="25"><br><br>
+            <label for="breakTime">Break Time (minutes):</label><br>
+            <input type="number" id="breakTime" value="5"><br><br>
+            <button type="button" id="addTask">Add Task</button>
+        </form>
+        <br>
+        
+        <img src="vid.gif" width="100" height="100">
+
+        <div id="tasks">
+            <h2>Tasks:</h2>
+            <div class="quadrant" id="urgent-important">
+                <h3>Urgent/Important</h3>
+            </div>
+            <div class="quadrant" id="important-noturgent">
+                <h3>Important/Not Urgent</h3>
+            </div>
+            <div class="quadrant" id="urgent-notimportant">
+                <h3>Urgent/Not Important</h3>
+            </div>
+            <div class="quadrant" id="noturgent-notimportant">
+                <h3>Not Urgent/Not Important</h3>
+            </div>
+        </div>
+            
+        <div id="timer">
+            <h2>Timer:</h2>
+            <p id="timerText">00:00</p>
+            <button id="startTimer">Start Timer</button>
+            <button id="resetTimer">Reset Timer</button>
+        </div>
+    </div>
+        
+    <script>
+      const _0x5070ce=_0x1e3b;function _0x18bb(){const _0x47b4f1=['17973000XXcmim','display','zoomLevel','login','checkbox','findIndex','appendChild','resetTimer','Delete','DOMContentLoaded','00:00','50unRKTr','delete-button','3698808WLDWJM','Please\x20fill\x20out\x20both\x20the\x20task\x20and\x20estimated\x20time.','92488SXXPsc','click','type','stringify','881631zQzKkp','zoom','textContent','change','parse','getElementById','breakTime','style','classList','currentUser','addEventListener','block','checkbox-label','checked','2868005mVGLAr','6BqpoOT','addTask','startTimer','358890tRbSwu','946263tbcNBC','\x20-\x20Priority:\x20','backgroundAudio','estimatedTime','workTime','label','\x20minutes','body','getItem','div','\x20-\x20Estimated\x20Time:\x20','remove','padStart','input','value','24anjtcn','play','forEach','push','Please\x20enter\x20a\x20username.','pause','time','createElement','setItem','timerText','add','task','currentTime'];_0x18bb=function(){return _0x47b4f1;};return _0x18bb();}function _0x1e3b(_0x3e65d3,_0x31ec9e){const _0x18bb3b=_0x18bb();return _0x1e3b=function(_0x1e3b8f,_0x108353){_0x1e3b8f=_0x1e3b8f-0x160;let _0x28cadc=_0x18bb3b[_0x1e3b8f];return _0x28cadc;},_0x1e3b(_0x3e65d3,_0x31ec9e);}(function(_0x45e031,_0x4212f2){const _0xc14149=_0x1e3b,_0x247f74=_0x45e031();while(!![]){try{const _0x3b91b1=parseInt(_0xc14149(0x18b))/0x1+parseInt(_0xc14149(0x19e))/0x2*(-parseInt(_0xc14149(0x160))/0x3)+-parseInt(_0xc14149(0x189))/0x4+parseInt(_0xc14149(0x187))/0x5*(parseInt(_0xc14149(0x1a1))/0x6)+-parseInt(_0xc14149(0x19d))/0x7+-parseInt(_0xc14149(0x16f))/0x8*(-parseInt(_0xc14149(0x18f))/0x9)+parseInt(_0xc14149(0x17c))/0xa;if(_0x3b91b1===_0x4212f2)break;else _0x247f74['push'](_0x247f74['shift']());}catch(_0x535b21){_0x247f74['push'](_0x247f74['shift']());}}}(_0x18bb,0x7a58f));let scale=0x1;function resizePage(_0x5b0cfc){const _0x424ed1=_0x1e3b;scale*=_0x5b0cfc,document[_0x424ed1(0x167)][_0x424ed1(0x196)]['zoom']=scale,localStorage['setItem'](_0x424ed1(0x17e),scale);}document[_0x5070ce(0x199)](_0x5070ce(0x185),function(){const _0x302ece=_0x5070ce;let _0x4043fe=localStorage[_0x302ece(0x168)](_0x302ece(0x198));scale=parseFloat(localStorage['getItem'](_0x302ece(0x17e)))||0x1,document[_0x302ece(0x167)][_0x302ece(0x196)][_0x302ece(0x190)]=scale;_0x4043fe&&(document[_0x302ece(0x194)]('username')[_0x302ece(0x16e)]=_0x4043fe,_0x4f7d18(_0x4043fe),document[_0x302ece(0x194)]('taskForm')['style'][_0x302ece(0x17d)]=_0x302ece(0x19a));document['getElementById'](_0x302ece(0x17f))[_0x302ece(0x199)]('click',function(){const _0x183f1f=_0x302ece;_0x4043fe=document[_0x183f1f(0x194)]('username')[_0x183f1f(0x16e)],_0x4043fe?(localStorage[_0x183f1f(0x177)](_0x183f1f(0x198),_0x4043fe),_0x4f7d18(_0x4043fe),document[_0x183f1f(0x194)]('taskForm')[_0x183f1f(0x196)][_0x183f1f(0x17d)]=_0x183f1f(0x19a)):alert(_0x183f1f(0x173));}),document[_0x302ece(0x194)](_0x302ece(0x19f))[_0x302ece(0x199)](_0x302ece(0x18c),function(){const _0x328ee1=_0x302ece,_0x52536a=document[_0x328ee1(0x194)]('todo')[_0x328ee1(0x16e)],_0x4855fb=document[_0x328ee1(0x194)]('priority')[_0x328ee1(0x16e)],_0x14c86b=document[_0x328ee1(0x194)](_0x328ee1(0x175))[_0x328ee1(0x16e)];_0x52536a&&_0x14c86b?(_0x281d34(_0x4043fe,_0x52536a,_0x4855fb,_0x14c86b),_0x23e674(_0x4043fe,_0x52536a,_0x4855fb,_0x14c86b),document[_0x328ee1(0x194)]('todo')[_0x328ee1(0x16e)]='',document[_0x328ee1(0x194)](_0x328ee1(0x175))[_0x328ee1(0x16e)]=''):alert(_0x328ee1(0x18a));});let _0x160033,_0x5989d2,_0x598772=![];function _0x38f4a2(){const _0x1deab7=_0x302ece;if(!_0x160033){let _0x48013f=parseInt(document['getElementById'](_0x1deab7(0x164))['value'])||0x19,_0x265fd2=parseInt(document['getElementById'](_0x1deab7(0x195))['value'])||0x5;_0x5989d2=_0x48013f*0x3c,_0x160033=setInterval(_0x7c1f33,0x3e8),document[_0x1deab7(0x194)](_0x1deab7(0x162))['play']();}}function _0x7c1f33(){const _0x31b7ef=_0x302ece;if(_0x5989d2>0x0){let _0x1ce975=Math['floor'](_0x5989d2/0x3c),_0x7407bd=_0x5989d2%0x3c;document[_0x31b7ef(0x194)](_0x31b7ef(0x178))['textContent']=String(_0x1ce975)[_0x31b7ef(0x16c)](0x2,'0')+':'+String(_0x7407bd)[_0x31b7ef(0x16c)](0x2,'0'),_0x5989d2--;}else{clearInterval(_0x160033),_0x160033=null;if(_0x598772){;_0x598772=![],_0x5989d2=(parseInt(document[_0x31b7ef(0x194)](_0x31b7ef(0x164))['value'])||0x19)*0x3c,document[_0x31b7ef(0x194)]('backgroundAudio')[_0x31b7ef(0x170)]();}else{;_0x598772=!![],_0x5989d2=(parseInt(document[_0x31b7ef(0x194)](_0x31b7ef(0x195))[_0x31b7ef(0x16e)])||0x5)*0x3c,document['getElementById']('backgroundAudio')[_0x31b7ef(0x174)]();}_0x160033=setInterval(_0x7c1f33,0x3e8);}}function _0xbe6c71(){const _0x2f1654=_0x302ece;clearInterval(_0x160033),_0x160033=null,document[_0x2f1654(0x194)]('timerText')[_0x2f1654(0x191)]=_0x2f1654(0x186),document[_0x2f1654(0x194)](_0x2f1654(0x162))['pause'](),document['getElementById'](_0x2f1654(0x162))[_0x2f1654(0x17b)]=0x0;}document[_0x302ece(0x194)](_0x302ece(0x1a0))[_0x302ece(0x199)](_0x302ece(0x18c),_0x38f4a2),document[_0x302ece(0x194)](_0x302ece(0x183))[_0x302ece(0x199)](_0x302ece(0x18c),_0xbe6c71);function _0x23e674(_0xb3ebfc,_0x414f3c,_0x29d41c,_0x2d1b29,_0x315c70=![]){const _0x3c6713=_0x302ece;let _0x78726=JSON[_0x3c6713(0x193)](localStorage['getItem'](_0xb3ebfc))||[];_0x78726[_0x3c6713(0x172)]({'task':_0x414f3c,'priority':_0x29d41c,'estimatedTime':_0x2d1b29,'isChecked':_0x315c70}),localStorage[_0x3c6713(0x177)](_0xb3ebfc,JSON['stringify'](_0x78726));}function _0x4f7d18(_0x5e750f){const _0x331ec4=_0x302ece;let _0x127563=JSON[_0x331ec4(0x193)](localStorage[_0x331ec4(0x168)](_0x5e750f))||[];_0x127563[_0x331ec4(0x171)](function(_0x49844b){const {task:_0x58ac77,priority:_0xd6b141,estimatedTime:_0xba3f8b,isChecked:_0x156e0c}=_0x49844b;_0x281d34(_0x5e750f,_0x58ac77,_0xd6b141,_0xba3f8b,_0x156e0c);});}function _0x281d34(_0x11d683,_0x41a2c7,_0x1dd596,_0x10919e,_0x36ff32=![]){const _0x2ae3a0=_0x302ece,_0xc2795f=document[_0x2ae3a0(0x176)](_0x2ae3a0(0x169));_0xc2795f[_0x2ae3a0(0x197)][_0x2ae3a0(0x179)](_0x2ae3a0(0x17a));const _0xf624de=document['createElement'](_0x2ae3a0(0x165));_0xf624de[_0x2ae3a0(0x191)]=_0x41a2c7+_0x2ae3a0(0x161)+_0x1dd596+_0x2ae3a0(0x16a)+_0x10919e+_0x2ae3a0(0x166);const _0x15ad66=document[_0x2ae3a0(0x176)](_0x2ae3a0(0x16d));_0x15ad66['setAttribute'](_0x2ae3a0(0x18d),_0x2ae3a0(0x180)),_0x15ad66[_0x2ae3a0(0x19c)]=_0x36ff32,_0x15ad66['addEventListener'](_0x2ae3a0(0x192),function(){const _0x3cd28e=_0x2ae3a0;_0x104d1e(_0x11d683,_0x41a2c7,_0x1dd596,_0x10919e,this[_0x3cd28e(0x19c)]);});const _0x438262=document[_0x2ae3a0(0x176)](_0x2ae3a0(0x165));_0x438262[_0x2ae3a0(0x197)][_0x2ae3a0(0x179)](_0x2ae3a0(0x19b)),_0x438262['appendChild'](_0x15ad66),_0x438262[_0x2ae3a0(0x182)](_0xf624de);const _0x1d193e=document[_0x2ae3a0(0x176)]('button');_0x1d193e[_0x2ae3a0(0x197)][_0x2ae3a0(0x179)](_0x2ae3a0(0x188)),_0x1d193e[_0x2ae3a0(0x191)]=_0x2ae3a0(0x184),_0x1d193e[_0x2ae3a0(0x199)](_0x2ae3a0(0x18c),function(){const _0x54f56c=_0x2ae3a0;_0xc2795f[_0x54f56c(0x16b)](),_0x1d828f(_0x11d683,_0x41a2c7,_0x1dd596,_0x10919e);}),_0xc2795f[_0x2ae3a0(0x182)](_0x1d193e),_0xc2795f['appendChild'](_0x438262);let _0x5b6ecb=document[_0x2ae3a0(0x194)](_0x1dd596);_0x5b6ecb[_0x2ae3a0(0x182)](_0xc2795f);}function _0x1d828f(_0x3500e1,_0x409b8c,_0xfaab10,_0x1d24d8){const _0x26a9a7=_0x302ece;let _0x39e42f=JSON['parse'](localStorage[_0x26a9a7(0x168)](_0x3500e1))||[];_0x39e42f=_0x39e42f['filter'](_0x41d916=>_0x41d916[_0x26a9a7(0x17a)]!==_0x409b8c||_0x41d916['priority']!==_0xfaab10||_0x41d916[_0x26a9a7(0x163)]!==_0x1d24d8),localStorage[_0x26a9a7(0x177)](_0x3500e1,JSON[_0x26a9a7(0x18e)](_0x39e42f));}function _0x104d1e(_0x40282c,_0x4e57c7,_0x308f88,_0x2327f8,_0x5edad2){const _0x84f3eb=_0x302ece;let _0x3f8ea2=JSON[_0x84f3eb(0x193)](localStorage[_0x84f3eb(0x168)](_0x40282c))||[];const _0x2bf213=_0x3f8ea2[_0x84f3eb(0x181)](_0x4f9468=>_0x4f9468[_0x84f3eb(0x17a)]===_0x4e57c7&&_0x4f9468['priority']===_0x308f88&&_0x4f9468[_0x84f3eb(0x163)]===_0x2327f8);_0x2bf213!==-0x1&&(_0x3f8ea2[_0x2bf213]['isChecked']=_0x5edad2,localStorage[_0x84f3eb(0x177)](_0x40282c,JSON['stringify'](_0x3f8ea2)));}});
+    </script>
+</body>
+</html>

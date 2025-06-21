@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Time Management Calendar</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #000000;
+      color: #fff;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .view-toggle, .navigation {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .calendar {
+      width: 100%;
+      background-color: #333;
+      border-radius: 8px;
+      padding: 10px;
+      overflow: auto;
+    }
+    .week-view, .month-view {
+      width: 100%;
+    }
+    .day-block {
+      margin-bottom: 15px;
+    }
+    .day-header {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+      resize: none;
+      overflow: hidden;
+      min-height: 50px;
+      background-color: #222;
+      color: #fff;
+      border: 1px solid #555;
+      display: block;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #fff;
+    }
+    td, th {
+      border: 1px solid #444;
+      padding: 8px;
+      text-align: center;
+      vertical-align: top;
+    }
+    th {
+      background-color: #555;
+    }
+    .navigation button {
+      margin: 5px;
+    }
+    .date-label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+    button {
+      background-color: #007BFF;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    button:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+    button:active {
+      background-color: #004080;
+      transform: scale(1);
+    }
+    button:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(38, 143, 255, 0.5);
+    }
+    .month-view .current-month {
+      background-color: red;
+    }
+    .month-view .other-month {
+      background-color: blue;
+      color: white;
+    }
+    .today {
+      background-color: yellow !important;
+      color: black !important;
+    }
+    #login-form {
+      margin-bottom: 20px;
+    }
+    #login-form input {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #555;
+    }
+    #user-info {
+      margin-bottom: 10px;
+    }
+    .zoom-controls {
+      margin-bottom: 10px;
+    }
+    #zoom-container {
+      width: 100%;
+      transform-origin: top left;
+    }
+  </style>
+
+</head>
+
+<body onload="checkLogin()">
+
+  <div id="zoom-container">
+    <div class="container">
+      <div id="login-form">
+        <input type="email" id="email" placeholder="Enter your Gmail address" required>
+        <button onclick="login()">Login</button>
+      </div>
+
+      <div id="user-info" style="display: none;">
+        Logged in as: <span id="user-email"></span>
+        <button onclick="logout()">Logout</button>
+      </div>
+
+      <p><a href="t.html">Go back to today mode</a></p>
+ <p><a href="clock.html">Go back to time tracker</a></p>
+
+      <div id="calendar-container" style="display: none;">
+        <div class="zoom-controls">
+          <button onclick="zoom(1.1)">Zoom In</button>
+          <button onclick="zoom(0.9)">Zoom Out</button>
+        </div>
+
+        <div class="view-toggle">
+          <button onclick="showView('week')">Weekly View</button>
+          <button onclick="showView('month')">Monthly View</button>
+        </div>
+
+        <div class="navigation">
+          <button onclick="changePeriod(-1)">Previous</button>
+          <button onclick="changePeriod(1)">Next</button>
+        </div>
+
+        <div class="calendar week-view" id="week-view">
+          <h2 id="week-title">Weekly View</h2>
+          <div id="week-container"></div>
+        </div>
+
+        <div class="calendar month-view" id="month-view" style="display:none;">
+          <h2 id="month-title">Monthly View</h2>
+          <table>
+            <tr>
+              <th>Sun</th>
+              <th>Mon</th>
+              <th>Tue</th>
+              <th>Wed</th>
+              <th>Thu</th>
+              <th>Fri</th>
+              <th>Sat</th>
+            </tr>
+            <tbody id="month-days"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(_0x3c5bea,_0x5b4f37){const _0x165039=_0x450c,_0x3e8b8e=_0x3c5bea();while(!![]){try{const _0x49f129=-parseInt(_0x165039(0xf3))/0x1*(-parseInt(_0x165039(0x10a))/0x2)+-parseInt(_0x165039(0xfe))/0x3+parseInt(_0x165039(0x113))/0x4*(-parseInt(_0x165039(0x133))/0x5)+-parseInt(_0x165039(0x130))/0x6*(parseInt(_0x165039(0xf2))/0x7)+-parseInt(_0x165039(0x11a))/0x8*(-parseInt(_0x165039(0xdc))/0x9)+parseInt(_0x165039(0xee))/0xa+parseInt(_0x165039(0x12f))/0xb;if(_0x49f129===_0x5b4f37)break;else _0x3e8b8e['push'](_0x3e8b8e['shift']());}catch(_0x30522e){_0x3e8b8e['push'](_0x3e8b8e['shift']());}}}(_0x5cfe,0xde150));let currentUser=null,eventsData={},currentDate=new Date(),currentZoom=0x1;function checkLogin(){const _0x21c228=_0x450c,_0x3921f5=localStorage[_0x21c228(0x10b)](_0x21c228(0x122));_0x3921f5&&(currentUser=_0x3921f5,document[_0x21c228(0x10d)](_0x21c228(0x111))['style'][_0x21c228(0x118)]='none',document[_0x21c228(0x10d)](_0x21c228(0x11b))[_0x21c228(0xfb)][_0x21c228(0x118)]=_0x21c228(0xe5),document[_0x21c228(0x10d)](_0x21c228(0x11c))['textContent']=_0x3921f5,document[_0x21c228(0x10d)](_0x21c228(0xf0))['style'][_0x21c228(0x118)]='block',loadEventsData(),loadZoomLevel(),showView('week'));}function login(){const _0x326c1e=_0x450c,_0x2024d3=document['getElementById'](_0x326c1e(0xfa))['value'];_0x2024d3&&_0x2024d3[_0x326c1e(0x12e)](_0x326c1e(0x127))?(currentUser=_0x2024d3,localStorage[_0x326c1e(0x112)](_0x326c1e(0x122),_0x2024d3),document[_0x326c1e(0x10d)](_0x326c1e(0x111))[_0x326c1e(0xfb)][_0x326c1e(0x118)]=_0x326c1e(0x12d),document[_0x326c1e(0x10d)](_0x326c1e(0x11b))[_0x326c1e(0xfb)][_0x326c1e(0x118)]=_0x326c1e(0xe5),document[_0x326c1e(0x10d)]('user-email')['textContent']=_0x2024d3,document['getElementById'](_0x326c1e(0xf0))[_0x326c1e(0xfb)]['display']=_0x326c1e(0xe5),loadEventsData(),loadZoomLevel(),showView(_0x326c1e(0x123))):alert(_0x326c1e(0x12a));}function logout(){const _0xf614f7=_0x450c;currentUser=null,eventsData={},localStorage[_0xf614f7(0xf4)](_0xf614f7(0x122)),localStorage['removeItem']('currentZoom'),document[_0xf614f7(0x10d)]('login-form')[_0xf614f7(0xfb)][_0xf614f7(0x118)]=_0xf614f7(0xe5),document[_0xf614f7(0x10d)](_0xf614f7(0x11b))[_0xf614f7(0xfb)][_0xf614f7(0x118)]=_0xf614f7(0x12d),document[_0xf614f7(0x10d)]('calendar-container')[_0xf614f7(0xfb)][_0xf614f7(0x118)]='none',document[_0xf614f7(0x10d)](_0xf614f7(0xfa))['value']='',resetZoom();}function loadEventsData(){const _0x5b0a00=_0x450c,_0x53e598=localStorage[_0x5b0a00(0x10b)](_0x5b0a00(0x109)+currentUser);_0x53e598&&(eventsData=JSON['parse'](_0x53e598));}function saveEventsData(){const _0x31d0cc=_0x450c;localStorage[_0x31d0cc(0x112)](_0x31d0cc(0x109)+currentUser,JSON[_0x31d0cc(0xe1)](eventsData));}function showView(_0x296e69){const _0xef9d61=_0x450c,_0x2a0353=document[_0xef9d61(0x10d)](_0xef9d61(0xdd)),_0x46400f=document[_0xef9d61(0x10d)](_0xef9d61(0x120));if(_0x296e69==='week')_0x2a0353[_0xef9d61(0xfb)]['display']=_0xef9d61(0xe5),_0x46400f[_0xef9d61(0xfb)][_0xef9d61(0x118)]=_0xef9d61(0x12d),generateWeeklyView(currentDate);else _0x296e69===_0xef9d61(0xdb)&&(_0x2a0353[_0xef9d61(0xfb)][_0xef9d61(0x118)]=_0xef9d61(0x12d),_0x46400f[_0xef9d61(0xfb)][_0xef9d61(0x118)]='block',generateMonthlyView(currentDate));}function generateWeeklyView(_0x24e305){const _0x37e0e5=_0x450c,_0x5b7b67=new Date(_0x24e305);_0x5b7b67[_0x37e0e5(0xeb)](_0x24e305[_0x37e0e5(0x101)]()-_0x24e305[_0x37e0e5(0x12c)]());const _0x3786f3=new Date(_0x5b7b67);_0x3786f3[_0x37e0e5(0xeb)](_0x5b7b67['getDate']()+0x6),document[_0x37e0e5(0x10d)](_0x37e0e5(0x100))[_0x37e0e5(0xde)]='Weekly\x20View\x20-\x20'+_0x5b7b67['toLocaleDateString']()+_0x37e0e5(0x119)+_0x3786f3[_0x37e0e5(0xff)]();const _0x103250=document[_0x37e0e5(0x10d)]('week-container');_0x103250[_0x37e0e5(0x10c)]='';const _0x31a35d=[_0x37e0e5(0x11f),'Monday',_0x37e0e5(0x103),_0x37e0e5(0x125),'Thursday',_0x37e0e5(0xe0),_0x37e0e5(0x128)];for(let _0x538587=0x0;_0x538587<0x7;_0x538587++){const _0x5c15ed=new Date(_0x5b7b67);_0x5c15ed[_0x37e0e5(0xeb)](_0x5b7b67[_0x37e0e5(0x101)]()+_0x538587);const _0x3c3d37=formatDate(_0x5c15ed),_0x16921f=_0x5c15ed[_0x37e0e5(0x106)]()===new Date()[_0x37e0e5(0x106)](),_0x2a4bf4=document[_0x37e0e5(0xf1)](_0x37e0e5(0x115));_0x2a4bf4[_0x37e0e5(0xec)][_0x37e0e5(0xf8)]('day-block'),_0x16921f&&_0x2a4bf4[_0x37e0e5(0xec)]['add'](_0x37e0e5(0x114)),_0x2a4bf4[_0x37e0e5(0x10c)]='\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22day-header\x22>'+_0x31a35d[_0x538587]+',\x20'+_0x5c15ed[_0x37e0e5(0xff)](_0x37e0e5(0xe4),{'month':'long','day':_0x37e0e5(0xe9)})+_0x37e0e5(0xf7)+_0x31a35d[_0x538587]+_0x37e0e5(0xef)+_0x3c3d37+_0x37e0e5(0xed)+(eventsData[_0x3c3d37]||'')+_0x37e0e5(0xf6),_0x103250[_0x37e0e5(0xfd)](_0x2a4bf4);}document[_0x37e0e5(0xe3)](_0x37e0e5(0x117))['forEach'](autoResize);}function generateMonthlyView(_0x586d02){const _0x49b006=_0x450c,_0x3ce5c1=_0x586d02[_0x49b006(0x121)](),_0x1ab5b3=_0x586d02['getMonth'](),_0x30940c=new Date(_0x3ce5c1,_0x1ab5b3,0x1),_0x4c791d=new Date(_0x30940c);_0x4c791d[_0x49b006(0x132)](0x0,0x0,0x0,0x0),_0x4c791d[_0x49b006(0xeb)](_0x4c791d[_0x49b006(0x101)]()-_0x4c791d[_0x49b006(0x12c)]()),document[_0x49b006(0x10d)](_0x49b006(0x129))[_0x49b006(0xde)]=_0x49b006(0x105)+_0x586d02[_0x49b006(0xff)](_0x49b006(0xe4),{'month':_0x49b006(0x11d),'year':_0x49b006(0xe9)});const _0x2921c2=document[_0x49b006(0x10d)](_0x49b006(0x131));_0x2921c2[_0x49b006(0x10c)]='';const _0x3eacb1=_0x1ab5b3%0x2===0x0?_0x49b006(0xf5):_0x49b006(0xe8);for(let _0x1c56aa=0x0;_0x1c56aa<0x6;_0x1c56aa++){let _0x41b286=_0x49b006(0x11e);for(let _0x63ee25=0x0;_0x63ee25<0x7;_0x63ee25++){const _0x460514=new Date(_0x4c791d),_0x3ad00d=formatDate(_0x460514),_0x513242=_0x460514[_0x49b006(0xe6)]()===_0x1ab5b3,_0x58867=_0x460514['toDateString']()===new Date()[_0x49b006(0x106)]();let _0x5ac044=_0x513242?_0x3eacb1:_0x49b006(0xe8);_0x58867&&(_0x5ac044+=_0x49b006(0x107)),_0x41b286+=_0x49b006(0xdf)+_0x5ac044+'\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\x22date-label\x22>'+_0x460514[_0x49b006(0x101)]()+'</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<textarea\x20placeholder=\x22Event\x22\x20data-date=\x22'+_0x3ad00d+_0x49b006(0xed)+(eventsData[_0x3ad00d]||'')+_0x49b006(0x126),_0x4c791d[_0x49b006(0xeb)](_0x4c791d[_0x49b006(0x101)]()+0x1);}_0x41b286+=_0x49b006(0x12b),_0x2921c2[_0x49b006(0x10c)]+=_0x41b286;}document[_0x49b006(0xe3)](_0x49b006(0x117))[_0x49b006(0x124)](autoResize);}function formatDate(_0x23921f){const _0x5dd536=_0x450c,_0x4b0333=_0x23921f[_0x5dd536(0x121)](),_0x399f7b=String(_0x23921f[_0x5dd536(0xe6)]()+0x1)[_0x5dd536(0x116)](0x2,'0'),_0x4f6628=String(_0x23921f[_0x5dd536(0x101)]())[_0x5dd536(0x116)](0x2,'0');return _0x4b0333+'-'+_0x399f7b+'-'+_0x4f6628;}function updateEvent(_0x468904){const _0x6c26be=_0x450c,_0x428f8c=_0x468904[_0x6c26be(0xe7)](_0x6c26be(0xfc));eventsData[_0x428f8c]=_0x468904[_0x6c26be(0x104)],saveEventsData();}function _0x5cfe(){const _0x4c34cf=['toLocaleDateString','week-title','getDate','scrollHeight','Tuesday','value','Monthly\x20View\x20-\x20','toDateString','\x20today','transform','calendarEvents_','4VBiUzz','getItem','innerHTML','getElementById','auto','body','currentZoom','login-form','setItem','3767452GyEimU','today','div','padStart','textarea','display','\x20to\x20','13856696GjrWpG','user-info','user-email','long','<tr>','Sunday','month-view','getFullYear','loggedInEmail','week','forEach','Wednesday','</textarea>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</td>','@gmail.com','Saturday','month-title','Please\x20enter\x20a\x20valid\x20Gmail\x20address.','</tr>','getDay','none','endsWith','15262071IzKjNy','3042lcVuqb','month-days','setHours','5LxHwkP','scale(','month','9QRACyq','week-view','innerText','<td\x20class=\x22','Friday','stringify','height','querySelectorAll','en-US','block','getMonth','getAttribute','other-month','numeric','setMonth','setDate','classList','\x22\x20oninput=\x22updateEvent(this)\x22>','218950ZbSlMa','\x22\x20data-date=\x22','calendar-container','createElement','24535PZaIQK','882394KROfPz','removeItem','current-month','</textarea>\x0a\x20\x20\x20\x20\x20\x20\x20\x20','</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<textarea\x20placeholder=\x22Task/Event\x20for\x20','add','width','email','style','data-date','appendChild','3833055OfiwQB'];_0x5cfe=function(){return _0x4c34cf;};return _0x5cfe();}function autoResize(_0x4230ec){const _0x187f0f=_0x450c;_0x4230ec['style'][_0x187f0f(0xe2)]=_0x187f0f(0x10e),_0x4230ec[_0x187f0f(0xfb)][_0x187f0f(0xe2)]=_0x4230ec[_0x187f0f(0x102)]+'px';}function changePeriod(_0xbed75b){const _0x51c47b=_0x450c,_0x3a2682=document['getElementById'](_0x51c47b(0xdd))[_0x51c47b(0xfb)][_0x51c47b(0x118)]===_0x51c47b(0xe5)?'week':_0x51c47b(0xdb);if(_0x3a2682===_0x51c47b(0x123))currentDate['setDate'](currentDate['getDate']()+_0xbed75b*0x7),generateWeeklyView(currentDate);else _0x3a2682===_0x51c47b(0xdb)&&(currentDate[_0x51c47b(0xea)](currentDate[_0x51c47b(0xe6)]()+_0xbed75b),generateMonthlyView(currentDate));}function zoom(_0x1ffa4e){currentZoom*=_0x1ffa4e,applyZoom(),saveZoomLevel();}function applyZoom(){const _0x224213=_0x450c;document[_0x224213(0x10d)]('zoom-container')[_0x224213(0xfb)][_0x224213(0x108)]=_0x224213(0x134)+currentZoom+')',document[_0x224213(0x10f)][_0x224213(0xfb)][_0x224213(0xf9)]=0x64/currentZoom+'%',document['body']['style']['height']=0x64/currentZoom+'%';}function saveZoomLevel(){const _0x2d3c11=_0x450c;localStorage[_0x2d3c11(0x112)](_0x2d3c11(0x110),currentZoom);}function _0x450c(_0x356884,_0x6c1086){const _0x5cfe81=_0x5cfe();return _0x450c=function(_0x450ce,_0x20fe2f){_0x450ce=_0x450ce-0xdb;let _0x5cfb2d=_0x5cfe81[_0x450ce];return _0x5cfb2d;},_0x450c(_0x356884,_0x6c1086);}function loadZoomLevel(){const _0xf7c2ac=_0x450c,_0x41b177=localStorage[_0xf7c2ac(0x10b)]('currentZoom');_0x41b177&&(currentZoom=parseFloat(_0x41b177),applyZoom());}function resetZoom(){currentZoom=0x1,applyZoom();}
+  </script>
+
+</body>
+</html>
